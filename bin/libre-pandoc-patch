@@ -1,0 +1,39 @@
+# fix pandoc's reference.docx
+# Dorai Sitaram
+# last modified 2016-08-07
+
+# .docx files written from libreoffice don't have
+# word/webSettings.xml, which trips pandoc when the latter uses
+# such a file as a reference.docx. This script fixes that by
+# adding a dummy webSettings.xml to ./reference.docx
+
+if test ! -f reference.docx
+then echo reference.docx not found; exit
+fi
+
+here=$(pwd)
+
+tmpdir=$(mktemp -d -t pandoc.tmp.XXX)
+rm -fr $tmpdir/*
+cp -p reference.docx $tmpdir
+
+cd $tmpdir
+unzip -q reference.docx
+
+cd word
+if test ! -f webSettings.xml
+then cp -p settings.xml webSettings.xml
+else echo reference.docx already has webSettings.xml
+fi
+if test ! -f numbering.xml
+then cp -p $HOME/src/pandoc/data/docx/word/numbering.xml .
+else echo reference.docx already has numbering.html
+fi
+cd ..
+
+rm reference.docx
+zip -q -r reference.docx *
+
+mv reference.docx $here
+cd $here
+rm -fr $tmpdir

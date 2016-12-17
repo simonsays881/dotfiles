@@ -1,0 +1,72 @@
+#!/bin/bash
+# prunedir
+# Dorai Sitaram
+# Last modified 2016-08-07
+#
+# Usage:
+#
+#   prunedir otherdir
+#
+# where otherdir is a full or relative pathname to a directory.
+# This call deletes all files under the working directory that
+# are also present in otherdir.  prunedir recursively operates on
+# correponding subdirectories under the working directory and
+# otherdir.  Subdirectories under the working directory that
+# become empty are also removed.
+
+if test $# -ne 1
+then echo argument directory missing; exit
+elif test ! -d "$1"
+then echo argument not directory; exit
+fi
+
+here="$(pwd)"
+
+if ! expr "$here" : ".*/$" > /dev/null
+then here="$here/"
+fi
+cd $1
+there=$(pwd)
+if ! expr "$there" : ".*/$" > /dev/null
+then there="$there/"
+fi
+
+prunecwdagainst() {
+  #echo prune $(pwd) against $1
+  for heref in * .*
+  do
+    theref="$1$heref"
+    if test "$heref" = "*" -o \
+            "$heref" = "." -o \
+            "$heref" = ".." -o \
+            "$heref" = ".git"
+    then echo > /dev/null
+    elif test -h "$heref"
+    then
+      echo softlink $heref SKIPPED
+    elif test -f "$heref"
+    then
+      #echo comparing $heref against $theref
+      if test ! -f "$theref"
+      then echo $theref doesnt exist
+      elif cmp "$heref" "$theref" > /dev/null
+      then
+        echo $heref DELETED
+        rm -f "$heref"
+      else
+        echo $heref is different
+      fi
+    elif test -d "$heref"
+    then
+      (cd "$heref"; prunecwdagainst "$theref/")
+      #echo $heref has $(ls -a $heref|wc -l) elts
+      if test $(ls -a "$heref"|wc -l) -eq 2
+      then echo removing EMPTY DIR $heref
+        rm -fr "$heref"
+      fi
+    fi
+  done
+}
+
+cd "$here"
+prunecwdagainst "$there"

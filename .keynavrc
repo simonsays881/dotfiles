@@ -1,0 +1,10 @@
+# last modified 2016-11-25
+p warp,click 3,end
+o warp,doubleclick 1,end
+m warp, sh "xdotool mousedown 1", sleep 5, sh "xdotool mouseup 1",end
+# drag doesn't seem to work at all
+#q drag 1
+q warp, drag 1
+#1 warp, click 1
+#2 warp, click 2
+#3 warp, click 3

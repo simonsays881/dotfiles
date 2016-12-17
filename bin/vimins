@@ -1,0 +1,63 @@
+# last modified 2016-08-13
+
+cd ~/gh/vim
+
+./configure \
+  --disable-gui \
+  --disable-netbeans \
+  --disable-nls \
+  --disable-sysmouse \
+  --disable-gpm
+
+cd src
+
+git checkout -- feature.h
+
+cat >> feature.h <<EOF
+
+#undef FEAT_ARABIC
+#undef FEAT_CRYPT
+#undef FEAT_CSCOPE
+#undef FEAT_EMACS_TAGS
+#undef FEAT_FARSI
+#undef FEAT_FKMAP
+#undef FEAT_KEYMAP
+#undef FEAT_LANGMAP  // doesn't reduce size?
+#undef FEAT_MENU
+#undef FEAT_MULTI_LANG
+#undef FEAT_POSTSCRIPT
+#undef FEAT_PRINTER
+#undef FEAT_RIGHTLEFT
+#undef FEAT_SIGNS
+#undef FEAT_SMARTINDENT
+#undef FEAT_STL_OPT
+#undef FEAT_TAG_BINS
+#undef FEAT_TAG_OLDSTATIC
+#undef FEAT_VISUALEXTRA
+#undef FEAT_XFONTSET
+// #undef FEAT_DIGRAPHS
+// #undef FEAT_MBYTE
+// #undef FEAT_MOUSE
+// #undef FEAT_MOUSE_DEC
+// #undef FEAT_MOUSE_NET
+// #undef FEAT_MOUSE_SGR
+// #undef FEAT_MOUSE_TTY
+// #undef FEAT_MOUSE_URXVT
+// #undef FEAT_MOUSE_XTERM
+// #undef FEAT_NETBEANS_INTG
+// #undef FEAT_SPELL
+// #undef FEAT_TERMRESPONSE
+// #undef FEAT_VREPLACE
+// #undef FEAT_WILDMENU
+
+EOF
+
+cd ..
+
+make
+
+sudo make install
+
+cd src
+
+git checkout -- feature.h

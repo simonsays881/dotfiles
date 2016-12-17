@@ -1,0 +1,22 @@
+# from http://stackoverflow.com/questions/9683279/make-the-current-commit-the-only-initial-commit-in-a-git-repository
+# last modified 2016-08-07
+
+git ls-files --others --exclude-standard > /tmp/my_untracked_files
+
+mv .git/config /tmp
+
+rm -fr .git
+git init
+git add .
+
+mv /tmp/config .git
+
+#cat /tmp/my_untracked_files | xargs -0 git rm --cached
+
+sed -i -e "s/^\(.*\)$/git rm --cached '\1'/" /tmp/my_untracked_files
+
+. /tmp/my_untracked_files
+
+git commit -m...
+
+git push -u --force origin master

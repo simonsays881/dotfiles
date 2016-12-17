@@ -1,0 +1,29 @@
+source ~/.mutthide
+
+set folder = "imaps://imap.gmail.com:993"
+set spoolfile = "+INBOX"
+set postponed = "+[Gmail]/Drafts"
+
+set header_cache = ~/.mutt/cache/headers
+set message_cachedir = ~/.mutt/cache/bodies
+set certificate_file = ~/.mutt/certificates
+
+set text_flowed = yes
+
+#set edit_headers = yes
+
+set autoedit = yes
+
+set alias_file = ~/.muttaliases
+
+source $alias_file
+
+set move = no
+
+set sort = reverse-date-received
+set imap_check_subscribed
+
+ignore "Authentication-Results:"
+ignore "DomainKey-Signature:"
+ignore "DKIM-Signature:"
+hdr_order Date From To Cc

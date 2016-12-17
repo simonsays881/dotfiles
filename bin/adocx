@@ -1,0 +1,10 @@
+# convert .adoc to .docx
+# Dorai Sitaram
+# last modified 2016-08-07
+
+g=${@: -1}
+g=${g##*/}
+g=${g%.*}
+
+asciidoctor $@ -a noheader -a nofooter -o - |
+pandoc -f html -o $g.docx

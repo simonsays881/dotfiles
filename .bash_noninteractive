@@ -1,0 +1,10 @@
+#last modified 2016-04-25
+
+if test -z "$VIM"
+then return
+fi
+
+#do only for bash-within-vim
+
+shopt -s expand_aliases
+. ~/.aliases

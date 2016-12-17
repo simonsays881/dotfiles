@@ -1,0 +1,40 @@
+# convert .adoc to .ms
+# Dorai Sitaram
+# last modified 2016-11-05
+
+asciidoctor $1
+
+g=${1##*/}
+g=${g%.*}
+
+vim -e -u NONE -s $g.html <<EOF
+g/^<div id="footer-text">$/ +1d
+%s#^<div class="title">\(.\{-}\)</div>\$#==sectionBreak==\1#
+x
+EOF
+
+pandoc $g.html -t man -o $g.ms
+
+#g/^\.nf$/ .,/^\.fi$/ s/^\(\\\\ \\\\ \)+$/\1/
+
+vim -e -u NONE -s $g.ms <<EOF
+0a
+.mso .groffrc
+.
+g/^\.nf$/ .,/^\.fi$/ s/^$/\\\\ /
+g/^\.nf$/ .,/^\.fi$/ s/^\(\\\\ \\\\ \)+$/.sp 1.5/
+g/^\.nf$/ .+2,/^\.fi$/-2 s/^/\\\\ \\\\ /
+g/^\.nf$/ +1s/^\\\\f.*/.sp .5\r\0/
+g/^\.fi$/ -1s/^\\\\f.*/\0\r.sp .5/
+g/^\.nf$/ -1s/^\.IP$/.LP/
+g/^\.fi$/ +1s/^.PP$/.LP/
+%s/\\\\-/-/g
+g/^\.S[HS]\s/ .,+1s/^.PP$/.LP/
+%s/^\.SH\s/\01\r/
+%s/^\.SS\s/.SH 2\r/
+%s#^==sectionBreak==\(.\{-}\)\$#.sp 1\r.I \1\r.LP#
+g/^\.LP\$/ +1s#^\.PP\$#==deletePP==#
+g/^==deletePP==\$/d
+%s/​//g
+x
+EOF

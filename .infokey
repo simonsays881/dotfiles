@@ -1,0 +1,15 @@
+# last modified 2016-03-09
+#info
+; history-node
+^] select-reference-this-line
+^b scroll-backward
+^f scroll-forward
+^o history-node
+^u scroll-backward
+b scroll-backward
+G end-of-node
+gg beginning-of-node
+h backward-char
+j next-line
+k prev-line
+l forward-char

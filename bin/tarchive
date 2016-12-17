@@ -1,0 +1,39 @@
+# tarchive
+# Dorai Sitaram
+# Last modified 2016-02-11
+
+currdir=$(pwd|sed -e 's#^..*/##')
+
+packdir=$currdir
+test -z $version || packdir=$currdir-$version
+
+test -f manifest || echo manifest not found
+
+cd ..
+
+rm -f $packdir.tar
+
+echo C $packdir.tar
+
+echo A $currdir/manifest
+tar cf $packdir.tar $currdir/manifest
+
+for f in $(grep "^[^;]" $currdir/manifest|sed 's#^#'$currdir'/#')
+do
+  echo A $f
+  tar uf $packdir.tar $f
+done
+
+gzip=""
+if test 1 -eq $(hostname|grep denali|wc -l)
+then gzip=t
+fi
+
+if test "$gzip"
+then echo C $packdir.tar.gz
+  gzip -f $packdir.tar
+  mv $packdir.tar.gz $currdir
+else echo C $packdir.tar.bz2
+  bzip2 -f $packdir.tar
+  mv $packdir.tar.bz2 $currdir
+fi

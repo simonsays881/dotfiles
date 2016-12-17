@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# last change 2016-08-06
+
+if test ! -d "$1"
+then echo $1 is not a directory
+  exit
+else
+  pushd "$1" > /dev/null
+  other="$(pwd)"
+  popd > /dev/null
+fi
+
+for f in * .*
+do
+  otherf="$other/$f"
+  if test "$f" = "." -o "$f" = ".." -o -h "$f" 
+  then :
+  elif test -d "$f"
+  then (cd "$f"; mergedir "$otherf")
+  else
+    echo cp -pf "$f" "$otherf"
+    cp -pf "$f" "$otherf"
+  fi
+done

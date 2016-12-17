@@ -1,0 +1,28 @@
+# last modified 2016-04-25
+
+# sjindent is a suitable value for the 'ep' option for vim. It
+# decides whether the code is C- or Lisp-like and indents
+# accordingly.
+
+f=$(mktemp -t indent.tmp.XXX)
+
+cat > $f
+
+lines_starting_with_rbrace=$(grep -c "^\s*}" $f)
+lines_ending_in_lbrace=$(grep -c "\S\s*{\s*$" $f)
+
+lines_starting_with_lparen=$(grep -c "^\s*(" $f)
+lines_ending_in_rparen=$(grep -c "\S\s*)\s*$" $f)
+
+c_like_lines=$((lines_starting_with_rbrace + lines_ending_in_lbrace))
+
+lisp_like_lines=$((lines_starting_with_lparen + lines_ending_in_rparen))
+
+if test $c_like_lines -ge $lisp_like_lines
+then indenter="astyle -s2 -o -O --mode=java"
+else indenter=scmindent.rkt
+fi
+
+$indenter < $f
+
+rm $f

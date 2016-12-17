@@ -1,0 +1,37 @@
+# last modified 2016-11-29
+
+fullname=$(kpsewhich $1)
+
+basename=${fullname##*/}
+
+cp $fullname ztmp2.tex
+sed -i -e '1i\\\\let\\TZPsinglepage 1' ztmp2.tex
+
+if test ! -f ztmp.tex
+then mv ztmp2.tex ztmp.tex
+elif ! cmp ztmp.tex ztmp2.tex
+then mv ztmp2.tex ztmp.tex
+fi
+
+g=${basename%.*}
+
+tex2page.lisp ztmp
+
+sed -i \
+  -e "s/^<h1>/<h2>/" \
+  -e "s/^<h2>/<h3>/" \
+  -e "s/^<h3>/<h4>/" \
+  -e "s/^<h4>/<h5>/" \
+  -e "s/^<h5>/<h6>/" \
+  \
+  -e "s/^<\/h1>/<\/h2>/" \
+  -e "s/^<\/h2>/<\/h3>/" \
+  -e "s/^<\/h3>/<\/h4>/" \
+  -e "s/^<\/h4>/<\/h5>/" \
+  -e "s/^<\/h5>/<\/h6>/" \
+  \
+  -e "/^<title>$/,/^<\/title>$/d" \
+  ztmp.html
+
+#pandoc -f html ztmp.html -o $g.docx
+pandoc ztmp.html -o $g.docx
